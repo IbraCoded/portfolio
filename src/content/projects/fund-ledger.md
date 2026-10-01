@@ -9,7 +9,7 @@ order: 1
 demo: transaction-log
 links:
   github: https://github.com/IbraCoded/fund-ledger
-  # demo: https://ledger.yourdomain.com
+  demo: https://ledger.ibracoded.dev
 highlightsAreSteps: true
 highlights:
   - title: Lock in a fixed order
