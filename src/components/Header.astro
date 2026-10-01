@@ -1,0 +1,78 @@
+---
+import { site } from '../site.config';
+import DownloadIcon from './DownloadIcon.astro';
+
+interface Props {
+  // On project pages the section links point back to the homepage.
+  home?: boolean;
+}
+
+const { home = true } = Astro.props;
+const base = home ? '' : '/';
+---
+
+<header class="container header">
+  <a href={home ? '#top' : '/'} class="brand">
+    <span class="dot" aria-hidden="true"></span>
+    {site.name}
+  </a>
+  <nav aria-label="Main">
+    <a href={`${base}#work`}>Work</a>
+    <a href={`${base}#about`}>About</a>
+    <a href={`${base}#contact`}>Contact</a>
+    <a href={site.cv} class="btn btn--small btn--accent-outline" download>
+      <DownloadIcon />
+      CV (PDF)
+    </a>
+  </nav>
+</header>
+
+<style>
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 20px;
+    flex-wrap: wrap;
+    padding-block: 22px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 18px;
+    text-decoration: none;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 26px;
+    font-size: 15px;
+  }
+
+  nav > a:not(.btn) {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  nav > a:not(.btn):hover {
+    color: var(--text);
+  }
+
+  @media (max-width: 480px) {
+    nav {
+      gap: 8px 18px;
+    }
+  }
+</style>

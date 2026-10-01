@@ -1,0 +1,141 @@
+---
+// The SQL behind one Fund Ledger transfer. "Run the transfer" replays it line by line.
+const lines: { text: string; kind: 'keyword' | 'comment' | 'plain' }[] = [
+  { text: 'BEGIN;', kind: 'keyword' },
+  { text: '-- lock both accounts in primary-key order', kind: 'comment' },
+  { text: 'SELECT id FROM account WHERE id IN (17, 42)', kind: 'plain' },
+  { text: '  ORDER BY id FOR UPDATE;', kind: 'plain' },
+  { text: '-- a retried request finds its key and stops here', kind: 'comment' },
+  { text: "INSERT INTO idempotency_key (key) VALUES ('a91f…');", kind: 'plain' },
+  { text: 'INSERT INTO entry (account_id, amount) VALUES', kind: 'plain' },
+  { text: '  (17, -250000.00), (42, 250000.00);', kind: 'plain' },
+  { text: 'COMMIT;', kind: 'keyword' },
+  { text: '-- deferred trigger: entries sum to zero, or nothing commits', kind: 'comment' },
+];
+---
+
+<figure class="txlog" data-txlog>
+  <pre class="code" tabindex="0" role="region" aria-label="SQL for one ledger transfer"><code>{lines.map((line) => <span class:list={['line', line.kind]}>{line.text}</span>)}</code></pre>
+  <figcaption>
+    <span class="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span>
+      <span data-status>Balanced and committed once.</span>
+    </span>
+    <button type="button" class="btn btn--small" data-run>Run the transfer</button>
+  </figcaption>
+</figure>
+
+<style>
+  .txlog {
+    margin: 0;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .code {
+    margin: 0;
+    padding: 20px 22px;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    line-height: 1.85;
+    overflow-x: auto;
+  }
+
+  /* The figure clips overflow, so draw the focus ring inside the code box. */
+  .code:focus-visible {
+    outline-offset: -2px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .line {
+    display: block;
+    min-width: max-content;
+    transition:
+      opacity 220ms var(--ease-out),
+      transform 220ms var(--ease-out);
+  }
+
+  .keyword {
+    color: var(--accent);
+  }
+
+  .comment {
+    color: var(--code-comment);
+  }
+
+  .code-hidden .line:not(.shown) {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 14px 12px 22px;
+    border-top: 1px solid var(--line);
+    background: var(--raised);
+    font-size: 15px;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    transition: background-color 200ms var(--ease-out);
+  }
+
+  .running .dot {
+    background: var(--line-strong);
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-txlog]').forEach((figure) => {
+    const code = figure.querySelector('.code');
+    const lines = Array.from(figure.querySelectorAll<HTMLElement>('.line'));
+    const status = figure.querySelector<HTMLElement>('[data-status]');
+    const button = figure.querySelector<HTMLButtonElement>('[data-run]');
+    if (!code || !status || !button) return;
+
+    let timer: number | undefined;
+
+    button.addEventListener('click', () => {
+      window.clearInterval(timer);
+      if (reduceMotion.matches) {
+        status.textContent = 'Balanced and committed once.';
+        return;
+      }
+
+      code.classList.add('code-hidden');
+      figure.classList.add('running');
+      lines.forEach((line) => line.classList.remove('shown'));
+      status.textContent = 'Running…';
+
+      let step = 0;
+      timer = window.setInterval(() => {
+        lines[step]?.classList.add('shown');
+        step += 1;
+        if (step >= lines.length) {
+          window.clearInterval(timer);
+          figure.classList.remove('running');
+          status.textContent = 'Balanced and committed once.';
+        }
+      }, 160);
+    });
+  });
+</script>

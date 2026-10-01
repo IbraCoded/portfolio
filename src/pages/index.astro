@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Featured from '../components/Featured.astro';
+import MoreWork from '../components/MoreWork.astro';
+import About from '../components/About.astro';
+import Experience from '../components/Experience.astro';
+import Contact from '../components/Contact.astro';
+import { getProjects } from '../lib/projects';
+
+const { featured, others } = await getProjects();
+---
+
+<Base>
+  <Header />
+  <main id="main">
+    <Hero />
+    {featured && <Featured project={featured} />}
+    <MoreWork projects={others} />
+    <About />
+    <Experience />
+    <Contact />
+  </main>
+</Base>

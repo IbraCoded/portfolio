@@ -1,0 +1,30 @@
+---
+import { caseStudyUrl, hasCaseStudy, type Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  // Hide the case study link when already on the case study page.
+  showCaseStudy?: boolean;
+  class?: string;
+}
+
+const { project, showCaseStudy = true, class: className } = Astro.props;
+const { links } = project.data;
+
+const items = [
+  showCaseStudy && hasCaseStudy(project) && { label: 'Read the case study', href: caseStudyUrl(project) },
+  links.writeup && { label: 'Read the write-up', href: links.writeup },
+  links.github && { label: 'Code on GitHub', href: links.github },
+  links.demo && { label: 'Live demo', href: links.demo },
+].filter((item): item is { label: string; href: string } => Boolean(item));
+---
+
+{
+  items.length > 0 && (
+    <div class:list={['link-row', className]}>
+      {items.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+    </div>
+  )
+}

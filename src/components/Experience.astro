@@ -1,0 +1,62 @@
+---
+import { site } from '../site.config';
+---
+
+<section id="experience" class="section deep">
+  <div class="container experience">
+    <h2 class="section-title">Experience</h2>
+    <ol>
+      {
+        site.experience.map((item) => (
+          <li>
+            <span class:list={['dates', { current: item.current }]}>{item.dates}</span>
+            <span class="title">{item.title}</span>
+            {item.detail && <span class="muted">{item.detail}</span>}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .deep {
+    background: var(--bg-deep);
+  }
+
+  .experience {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 40px 72px;
+  }
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 24px;
+    border-left: 1px solid var(--line-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .dates {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .dates.current {
+    color: var(--accent);
+  }
+
+  .title {
+    font-weight: 600;
+    font-size: 19px;
+  }
+</style>

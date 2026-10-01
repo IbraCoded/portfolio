@@ -1,0 +1,157 @@
+---
+import type { Project } from '../lib/projects';
+import ProjectLinks from './ProjectLinks.astro';
+import { demos } from './demos';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, description, summary, highlights, highlightsAreSteps, evidence, demo, stack } = project.data;
+const Demo = demo ? demos[demo] : undefined;
+const ListTag = highlightsAreSteps ? 'ol' : 'ul';
+---
+
+<section id="work" class="section">
+  <div class="container">
+    <span class="tag">Featured project</span>
+
+    <div class:list={['intro', { 'has-demo': Demo }]}>
+      <div class="intro-text">
+        <h2>{title}</h2>
+        <p class="description">{description ?? summary}</p>
+        {stack.length > 0 && <p class="stack">{stack.join(', ')}</p>}
+        <ProjectLinks project={project} />
+      </div>
+      {Demo && <Demo />}
+    </div>
+
+    {
+      highlights.length > 0 && (
+        <ListTag class="highlights">
+          {highlights.map((item, index) => (
+            <li>
+              {highlightsAreSteps && <span class="step">{index + 1}</span>}
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </li>
+          ))}
+        </ListTag>
+      )
+    }
+
+    {
+      evidence.length > 0 && (
+        <div class="evidence">
+          {evidence.map((item) => (
+            <div>
+              <h3>{item.title}</h3>
+              <p class="muted">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .tag {
+    display: inline-flex;
+    padding: 4px 12px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .intro {
+    display: grid;
+    gap: 40px clamp(40px, 5vw, 72px);
+    margin: 20px 0 48px;
+    align-items: start;
+  }
+
+  .intro.has-demo {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
+  }
+
+  .intro-text {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 40em;
+  }
+
+  h2 {
+    font-size: clamp(34px, 4.2vw, 60px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  .description {
+    color: var(--muted);
+    font-size: 19px;
+  }
+
+  .stack {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .highlights {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .highlights li {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px 26px 32px;
+    background: var(--raised);
+  }
+
+  .highlights h3 {
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  .highlights p {
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .step {
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .evidence {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: 32px 56px;
+    margin-top: 48px;
+  }
+
+  .evidence > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .evidence h3 {
+    font-size: 19px;
+  }
+</style>

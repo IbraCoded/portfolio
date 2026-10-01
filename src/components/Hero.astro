@@ -1,0 +1,112 @@
+---
+import { site } from '../site.config';
+import DownloadIcon from './DownloadIcon.astro';
+---
+
+<section id="top" class="container hero">
+  <h1 class="enter" style="animation-delay: 80ms">{site.headline}</h1>
+  <div class="hero-body enter" style="animation-delay: 220ms">
+    <div class="hero-intro">
+      <p class="lede">{site.intro}</p>
+      <div class="actions">
+        <a href={site.cv} class="btn btn--primary" download>
+          <DownloadIcon />
+          Download CV
+        </a>
+        <a href="#work" class="btn">View selected work</a>
+      </div>
+    </div>
+    <dl class="facts">
+      {
+        site.facts.map((fact) => (
+          <div class="fact">
+            <dt>{fact.label}</dt>
+            <dd>
+              {fact.highlight && <span class="status-dot" aria-hidden="true" />}
+              {fact.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(48px, 7vw, 104px) clamp(64px, 8vw, 112px);
+  }
+
+  h1 {
+    max-width: 15em;
+    font-size: clamp(40px, 6.2vw, 92px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .hero-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 40px clamp(40px, 6vw, 96px);
+    margin-top: clamp(36px, 4vw, 56px);
+    align-items: start;
+  }
+
+  .hero-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .lede {
+    max-width: 32em;
+    font-size: clamp(17px, 1.4vw, 20px);
+    color: var(--muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .facts {
+    margin: 0;
+    border-top: 1px solid var(--line);
+    font-size: 16px;
+  }
+
+  .fact {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 16px;
+    padding-block: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  dt {
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  @media (max-width: 480px) {
+    .fact {
+      grid-template-columns: 6.2rem minmax(0, 1fr);
+      gap: 12px;
+    }
+  }
+</style>

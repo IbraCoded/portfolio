@@ -1,0 +1,79 @@
+---
+import type { Project } from '../lib/projects';
+import ProjectLinks from './ProjectLinks.astro';
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+{
+  projects.length > 0 && (
+    <section class="section" aria-labelledby="more-work">
+      <div class="container">
+        <h2 id="more-work" class="section-title">More work</h2>
+        <ul class="list">
+          {projects.map((project) => (
+            <li class="row">
+              <div class="name">
+                <h3>{project.data.title}</h3>
+                <p class="meta">
+                  {[project.data.context, project.data.year].filter(Boolean).join(', ')}
+                </p>
+              </div>
+              <div class="detail">
+                <p class="muted">{project.data.summary}</p>
+                <ProjectLinks project={project} class="links" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .list {
+    list-style: none;
+    margin: 36px 0 0;
+    padding: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 10px 48px;
+    padding-block: 26px;
+    border-top: 1px solid var(--line);
+  }
+
+  .name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  h3 {
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  .meta {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .detail {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .detail :global(.links) {
+    font-size: 16px;
+  }
+</style>
